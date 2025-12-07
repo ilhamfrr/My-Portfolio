@@ -5,20 +5,23 @@ import { motion } from "framer-motion"
 import { Moon, Sun, Menu, X } from "lucide-react"
 import { useTheme } from "next-themes"
 import { Button } from "@/components/ui/button"
+import Link from "next/link"
+import { usePathname } from "next/navigation"
 
 const navItems = [
-  { name: "Home", href: "#home" },
-  { name: "About", href: "#about" },
-  { name: "Skills", href: "#skills" },
-  { name: "Projects", href: "#projects" },
-  { name: "Experience", href: "#experience" },
-  { name: "Contact", href: "#contact" },
+  { name: "Home", href: "/" },
+  { name: "About", href: "/about" },
+  { name: "Skills", href: "/skills" },
+  { name: "Projects", href: "/projects" },
+  { name: "Experience", href: "/experience" },
+  { name: "Contact", href: "/contact" },
 ]
 
 export function Navigation() {
   const [isScrolled, setIsScrolled] = useState(false)
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const { theme, setTheme } = useTheme()
+  const pathname = usePathname()
 
   useEffect(() => {
     const handleScroll = () => {
@@ -38,28 +41,36 @@ export function Navigation() {
     >
       <nav className="container mx-auto px-6 py-4">
         <div className="flex items-center justify-between relative">
-          <motion.a
-            href="#home"
-            className="text-2xl font-bold gradient-text"
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-          >
-            IF_Dev
-          </motion.a>
+          <Link href="/" legacyBehavior>
+            <motion.a
+              className="text-2xl font-bold gradient-text cursor-pointer"
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+            >
+              IF_Dev
+            </motion.a>
+          </Link>
 
           {/* Centered Desktop Navigation */}
           <div className="hidden md:flex absolute left-1/2 transform -translate-x-1/2 items-center space-x-8">
-            {navItems.map((item) => (
-              <motion.a
-                key={item.name}
-                href={item.href}
-                className="text-foreground/80 hover:text-foreground transition-colors"
-                whileHover={{ scale: 1.1 }}
-                whileTap={{ scale: 0.95 }}
-              >
-                {item.name}
-              </motion.a>
-            ))}
+            {navItems.map((item) => {
+              const isActive = pathname === item.href
+              return (
+                <Link key={item.name} href={item.href} legacyBehavior>
+                  <motion.a
+                    className={`cursor-pointer transition-colors ${
+                      isActive 
+                        ? "text-primary font-bold" 
+                        : "text-foreground/80 hover:text-foreground"
+                    }`}
+                    whileHover={{ scale: 1.1 }}
+                    whileTap={{ scale: 0.95 }}
+                  >
+                    {item.name}
+                  </motion.a>
+                </Link>
+              )
+            })}
           </div>
 
           {/* Desktop Theme Toggle */}
@@ -107,14 +118,18 @@ export function Navigation() {
             exit={{ opacity: 0, y: -20 }}
           >
             {navItems.map((item) => (
-              <a
-                key={item.name}
-                href={item.href}
-                className="block py-2 text-foreground/80 hover:text-foreground transition-colors"
-                onClick={() => setIsMobileMenuOpen(false)}
-              >
-                {item.name}
-              </a>
+              <Link key={item.name} href={item.href} legacyBehavior>
+                <a
+                  className={`block py-2 transition-colors ${
+                    pathname === item.href 
+                      ? "text-primary font-bold" 
+                      : "text-foreground/80 hover:text-foreground"
+                  }`}
+                  onClick={() => setIsMobileMenuOpen(false)}
+                >
+                  {item.name}
+                </a>
+              </Link>
             ))}
           </motion.div>
         )}
